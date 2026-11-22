@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>tiny-text-utils demo</title>
+  <style>
+    :root { --bg:#f6f5f2; --card:#fff; --ink:#1d1d1f; --muted:#6b6b70; --accent:#2f6fde; --line:#e4e2dc; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background:var(--bg); color:var(--ink); }
+    main { max-width: 720px; margin: 0 auto; padding: 48px 20px; }
+    h1 { margin:0 0 4px; font-size: 28px; }
+    p.sub { margin:0 0 28px; color:var(--muted); }
+    code { background:#ecebe6; padding:2px 6px; border-radius:4px; font-size: 0.9em; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px; }
+    label { display:block; font-weight:600; margin-bottom:8px; }
+    textarea { width:100%; min-height:90px; padding:12px; font: inherit; border:1px solid var(--line); border-radius:8px; resize: vertical; }
+    .row { display:flex; gap:12px; align-items:center; margin-top:12px; color:var(--muted); }
+    input[type=number] { width:80px; padding:6px 8px; border:1px solid var(--line); border-radius:6px; font: inherit; }
+    table { width:100%; border-collapse: collapse; margin-top:20px; }
+    td { padding:12px 8px; border-top:1px solid var(--line); vertical-align: top; }
+    td:first-child { width:140px; font-family: ui-monospace, Menlo, monospace; color:var(--accent); }
+    td:last-child { word-break: break-word; }
+    footer { margin-top:24px; color:var(--muted); font-size:14px; }
+    a { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>tiny-text-utils demo</h1>
+    <p class="sub">Type some text. The server runs it through the <code>tiny-text-utils</code> npm package and shows the result.</p>
+
+    <div class="card">
+      <label for="text">Your text</label>
+      <textarea id="text">  crème brûlée: my first npm package demo!  </textarea>
+      <div class="row">
+        <span>Truncate to</span>
+        <input id="max" type="number" min="0" value="20" />
+        <span>characters</span>
+      </div>
+
+      <table>
+        <tr><td>capitalize()</td><td id="capitalize"></td></tr>
+        <tr><td>slugify()</td><td id="slugify"></td></tr>
+        <tr><td>truncate()</td><td id="truncate"></td></tr>
+        <tr><td>wordCount()</td><td id="wordCount"></td></tr>
+      </table>
+    </div>
+
+    <footer>
+      Package source: <a href="https://github.com/Amrisha-Aashish/tiny-text-utils">github.com/Amrisha-Aashish/tiny-text-utils</a>
+    </footer>
+  </main>
+
+  <script>
+    const textEl = document.getElementById('text');
+    const maxEl = document.getElementById('max');
+    let timer;
+
+    async function update() {
+      const params = new URLSearchParams({ text: textEl.value, max: maxEl.value || '0' });
+      try {
+        const res = await fetch('/api/transform?' + params);
+        const data = await res.json();
+        for (const key of ['capitalize', 'slugify', 'truncate', 'wordCount']) {
+          document.getElementById(key).textContent = data.error ? data.error : String(data[key]);
+        }
+      } catch (e) {
+        document.getElementById('capitalize').textContent = 'Could not reach the server.';
+      }
+    }
+
+    function schedule() { clearTimeout(timer); timer = setTimeout(update, 200); }
+    textEl.addEventListener('input', schedule);
+    maxEl.addEventListener('input', schedule);
+    update();
+  </script>
+</body>
+</html>

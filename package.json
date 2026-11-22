@@ -1,0 +1,19 @@
+{
+  "name": "text-utils-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Demo project that uses the tiny-text-utils package.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "cli": "node index.js"
+  },
+  "author": "Amrisha Aashish",
+  "license": "MIT",
+  "dependencies": {
+    "tiny-text-utils": "github:Amrisha-Aashish/tiny-text-utils"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
